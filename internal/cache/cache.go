@@ -61,6 +61,10 @@ func Has(version string) bool {
 // Install extracts a Go archive into the cache directory for the given version.
 // archivePath should be a .tar.gz (Linux/macOS) or .zip (Windows) file.
 func Install(version string, archivePath string) error {
+	if err := checkNotRoot(); err != nil {
+		return err
+	}
+
 	vdir, err := VersionDir(version)
 	if err != nil {
 		return err
@@ -79,6 +83,10 @@ func Install(version string, archivePath string) error {
 
 // Remove deletes a cached Go version.
 func Remove(version string) error {
+	if err := checkNotRoot(); err != nil {
+		return err
+	}
+
 	vdir, err := VersionDir(version)
 	if err != nil {
 		return err
