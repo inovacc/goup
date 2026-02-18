@@ -11,8 +11,10 @@ import (
 
 func mockReleasesServer(t *testing.T, releases []Release) *httptest.Server {
 	t.Helper()
+
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
+
 		if err := json.NewEncoder(w).Encode(releases); err != nil {
 			t.Fatalf("encode: %v", err)
 		}
@@ -32,9 +34,11 @@ func TestFetchReleases(t *testing.T) {
 	if err != nil {
 		t.Fatalf("FetchReleasesFromURL: %v", err)
 	}
+
 	if len(got) != 2 {
 		t.Fatalf("len = %d, want 2", len(got))
 	}
+
 	if got[0].Version != "go1.23.0" {
 		t.Errorf("Version = %q, want go1.23.0", got[0].Version)
 	}
@@ -66,6 +70,7 @@ func TestLatestStable(t *testing.T) {
 	if err != nil {
 		t.Fatalf("LatestStableFromURL: %v", err)
 	}
+
 	if got.Version != "go1.23.0" {
 		t.Errorf("Version = %q, want go1.23.0", got.Version)
 	}
@@ -113,6 +118,7 @@ func TestFindFile(t *testing.T) {
 			if err != nil {
 				t.Fatalf("FindFile: %v", err)
 			}
+
 			if f.Filename != tt.wantFile {
 				t.Errorf("Filename = %q, want %q", f.Filename, tt.wantFile)
 			}
@@ -133,6 +139,7 @@ func TestFindFileFallbackToArchive(t *testing.T) {
 	if err != nil {
 		t.Fatalf("FindFile: %v", err)
 	}
+
 	if f.Kind != "archive" {
 		t.Errorf("Kind = %q, want archive", f.Kind)
 	}
@@ -149,5 +156,94 @@ func TestFindFileNoMatch(t *testing.T) {
 	_, err := FindFile(release, platform.Info{OS: "freebsd", Arch: "arm64"})
 	if err == nil {
 		t.Fatal("expected error for no matching file")
+	}
+}
+
+func TestFindRelease(t *testing.T) {
+	releases := []Release{
+		{Version: "go1.23.0", Stable: true},
+		{Version: "go1.22.5", Stable: true},
+		{Version: "go1.22.0", Stable: true},
+	}
+
+	tests := []struct {
+		name    string
+		version string
+		wantErr bool
+	}{
+		{"found first", "go1.23.0", false},
+		{"found middle", "go1.22.5", false},
+		{"found last", "go1.22.0", false},
+		{"not found", "go1.21.0", true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r, err := FindRelease(releases, tt.version)
+			if tt.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+
+				return
+			}
+
+			if err != nil {
+				t.Fatalf("FindRelease: %v", err)
+			}
+
+			if r.Version != tt.version {
+				t.Errorf("Version = %q, want %q", r.Version, tt.version)
+			}
+		})
+	}
+}
+
+func TestFindArchiveFile(t *testing.T) {
+	release := &Release{
+		Version: "go1.23.0",
+		Files: []File{
+			{Filename: "go1.23.0.windows-amd64.msi", OS: "windows", Arch: "amd64", Kind: "installer"},
+			{Filename: "go1.23.0.windows-amd64.zip", OS: "windows", Arch: "amd64", Kind: "archive"},
+			{Filename: "go1.23.0.linux-amd64.tar.gz", OS: "linux", Arch: "amd64", Kind: "archive"},
+			{Filename: "go1.23.0.darwin-arm64.pkg", OS: "darwin", Arch: "arm64", Kind: "installer"},
+		},
+	}
+
+	tests := []struct {
+		name     string
+		p        platform.Info
+		wantFile string
+		wantErr  bool
+	}{
+		{"windows archive", platform.Info{OS: "windows", Arch: "amd64"}, "go1.23.0.windows-amd64.zip", false},
+		{"linux archive", platform.Info{OS: "linux", Arch: "amd64"}, "go1.23.0.linux-amd64.tar.gz", false},
+		{"darwin no archive", platform.Info{OS: "darwin", Arch: "arm64"}, "", true},
+		{"no match", platform.Info{OS: "freebsd", Arch: "arm64"}, "", true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f, err := FindArchiveFile(release, tt.p)
+			if tt.wantErr {
+				if err == nil {
+					t.Fatal("expected error")
+				}
+
+				return
+			}
+
+			if err != nil {
+				t.Fatalf("FindArchiveFile: %v", err)
+			}
+
+			if f.Filename != tt.wantFile {
+				t.Errorf("Filename = %q, want %q", f.Filename, tt.wantFile)
+			}
+
+			if f.Kind != "archive" {
+				t.Errorf("Kind = %q, want archive", f.Kind)
+			}
+		})
 	}
 }
