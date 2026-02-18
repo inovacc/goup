@@ -13,10 +13,16 @@
 
 ## Prerequisites
 
-- Go 1.23+
+- Go 1.25+
 - [Task](https://taskfile.dev) (task runner)
 
-## Getting Started
+## Install
+
+```bash
+go install github.com/inovacc/goup@latest
+```
+
+### From Source
 
 ```bash
 git clone https://github.com/inovacc/goup.git
