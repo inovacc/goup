@@ -7,9 +7,9 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "goupdater",
+	Use:   "goup",
 	Short: "Detect, download, and install the latest Go version",
-	Long:  `goupdater checks the official Go download API, detects your OS and architecture, and installs the latest stable Go release.`,
+	Long:  `goup checks the official Go download API, detects your OS and architecture, and installs the latest stable Go release.`,
 }
 
 func Execute() {

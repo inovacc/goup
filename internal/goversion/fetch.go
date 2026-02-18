@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/inovacc/goupdater/internal/platform"
+	"github.com/inovacc/goup/internal/platform"
 )
 
 const releasesURL = "https://go.dev/dl/?mode=json"

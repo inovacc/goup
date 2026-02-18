@@ -1,4 +1,4 @@
-# goupdater
+# goup
 
 > Cross-platform CLI tool to detect, download, and install the latest Go version from the official API.
 
@@ -19,8 +19,8 @@
 ## Getting Started
 
 ```bash
-git clone https://github.com/inovacc/goupdater.git
-cd goupdater
+git clone https://github.com/inovacc/goup.git
+cd goup
 task deps
 task build
 ```
@@ -29,21 +29,21 @@ task build
 
 ```bash
 # Check for updates
-goupdater check
+goup check
 
 # List available Go versions
-goupdater list
-goupdater list --all    # Include unstable releases
+goup list
+goup list --all    # Include unstable releases
 
 # Install latest stable Go
-goupdater install
-goupdater install --force   # Force reinstall
+goup install
+goup install --force   # Force reinstall
 ```
 
 ## Architecture
 
 ```
-goupdater/
+goup/
 ├── cmd/                        # CLI commands (Cobra)
 │   ├── root.go                 # Root command
 │   ├── check.go                # Check for updates

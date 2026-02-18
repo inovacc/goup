@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/inovacc/goupdater/internal/goversion"
+	"github.com/inovacc/goup/internal/goversion"
 )
 
 const downloadBaseURL = "https://go.dev/dl/"

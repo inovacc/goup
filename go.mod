@@ -1,4 +1,4 @@
-module github.com/inovacc/goupdater
+module github.com/inovacc/goup
 
 go 1.25.7
 

@@ -63,7 +63,7 @@ sequenceDiagram
     participant DL as installer.Download
     participant Inst as installer.Install
 
-    User->>CLI: goupdater install
+    User->>CLI: goup install
     CLI->>Platform: Detect()
     Platform-->>CLI: {OS, Arch}
     CLI->>CLI: InstalledVersion()

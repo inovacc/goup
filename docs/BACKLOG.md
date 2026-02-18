@@ -15,4 +15,4 @@
 - **P2** | Proxy support (from PowerShell script reference) | Medium | Feature
 - **P2** | Install specific Go version (not just latest) | Medium | Feature
 - **P3** | Optional Go tools installation (gopls, dlv, staticcheck) | Medium | Feature
-- **P3** | Self-update mechanism for goupdater itself | Large | Feature
+- **P3** | Self-update mechanism for goup itself | Large | Feature

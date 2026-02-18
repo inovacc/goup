@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/inovacc/goupdater/internal/goversion"
-	"github.com/inovacc/goupdater/internal/platform"
+	"github.com/inovacc/goup/internal/goversion"
+	"github.com/inovacc/goup/internal/platform"
 	"github.com/spf13/cobra"
 )
 
@@ -32,7 +32,7 @@ var checkCmd = &cobra.Command{
 		fmt.Printf("Latest:    %s (stable)\n", latest.Version)
 
 		if installed == "" || goversion.NeedsUpdate(installed, latest.Version) {
-			fmt.Println("\nUpdate available! Run 'goupdater install' to update.")
+			fmt.Println("\nUpdate available! Run 'goup install' to update.")
 		} else {
 			fmt.Println("\nYou are up to date.")
 		}

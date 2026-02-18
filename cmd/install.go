@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/inovacc/goupdater/internal/goversion"
-	"github.com/inovacc/goupdater/internal/installer"
-	"github.com/inovacc/goupdater/internal/platform"
+	"github.com/inovacc/goup/internal/goversion"
+	"github.com/inovacc/goup/internal/installer"
+	"github.com/inovacc/goup/internal/platform"
 	"github.com/spf13/cobra"
 )
 

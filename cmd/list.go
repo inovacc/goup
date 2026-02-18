@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/inovacc/goupdater/internal/goversion"
+	"github.com/inovacc/goup/internal/goversion"
 	"github.com/spf13/cobra"
 )
 

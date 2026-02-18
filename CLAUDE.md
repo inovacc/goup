@@ -1,4 +1,4 @@
-# CLAUDE.md - goupdater
+# CLAUDE.md - goup
 
 ## Project Overview
 
@@ -8,7 +8,7 @@ Cross-platform Go CLI tool that detects, downloads, and installs the latest Go v
 
 - **Structure:** Hexagonal/Clean (`cmd/`, `internal/`)
 - **CLI Framework:** Cobra
-- **Module:** `github.com/inovacc/goupdater`
+- **Module:** `github.com/inovacc/goup`
 
 ### Key Packages
 

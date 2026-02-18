@@ -1,6 +1,6 @@
 package main
 
-import "github.com/inovacc/goupdater/cmd"
+import "github.com/inovacc/goup/cmd"
 
 func main() {
 	cmd.Execute()

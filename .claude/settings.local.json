@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:golang.org)",
+      "Bash(git init:*)",
+      "Bash(git branch:*)",
+      "Bash(go mod init:*)",
+      "Bash(glix install:*)",
+      "Bash(cobra-cli init:*)",
+      "Bash(go mod tidy:*)",
+      "Bash(go build:*)",
+      "Bash(bash \"B:/shared/development/personal/projects/goupdater/.scripts/build-verify.sh\")",
+      "Bash(bash \"B:/shared/development/personal/projects/goupdater/.scripts/git-commit.sh\")",
+      "Bash(python .scripts/rename.py:*)",
+      "Bash(go vet:*)",
+      "Bash(go test:*)"
+    ]
+  }
+}

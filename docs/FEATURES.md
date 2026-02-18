@@ -22,7 +22,7 @@
 
 ### Install Specific Version
 - **Priority:** P2
-- **Description:** `goupdater install go1.22.5` to install a specific version
+- **Description:** `goup install go1.22.5` to install a specific version
 - **Motivation:** Some projects require pinned Go versions
 
 ### Go Tools Installation
