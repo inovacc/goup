@@ -1,3 +1,4 @@
+// Package installer downloads and installs Go releases.
 package installer
 
 import (
@@ -5,7 +6,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
-	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -23,19 +23,12 @@ func Download(file *goversion.File) (string, error) {
 }
 
 // DownloadFromURL fetches a Go release file from the given base URL and verifies its checksum.
-// If the file already exists locally with a matching SHA256, the download is skipped.
 func DownloadFromURL(file *goversion.File, baseURL string) (string, error) {
 	url := baseURL + file.Filename
 	destDir := os.TempDir()
 	destPath := filepath.Join(destDir, file.Filename)
 
-	// Check if file already exists with correct checksum
-	if existing, err := checksumFile(destPath); err == nil && existing == file.SHA256 {
-		slog.Info("file already exists with valid checksum, skipping download", "file", file.Filename)
-		return destPath, nil
-	}
-
-	slog.Info("downloading", "file", file.Filename, "size_mb", file.Size/(1024*1024))
+	fmt.Printf("Downloading %s (%d MB)...\n", file.Filename, file.Size/(1024*1024))
 
 	client := &http.Client{Timeout: 10 * time.Minute}
 
@@ -43,7 +36,6 @@ func DownloadFromURL(file *goversion.File, baseURL string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("download: %w", err)
 	}
-
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
@@ -54,7 +46,6 @@ func DownloadFromURL(file *goversion.File, baseURL string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("create file: %w", err)
 	}
-
 	defer func() { _ = out.Close() }()
 
 	hasher := sha256.New()
@@ -70,24 +61,7 @@ func DownloadFromURL(file *goversion.File, baseURL string) (string, error) {
 		return "", fmt.Errorf("checksum mismatch: got %s, want %s", checksum, file.SHA256)
 	}
 
-	slog.Info("download complete, checksum verified")
+	fmt.Println("Download complete. Checksum verified.")
 
 	return destPath, nil
-}
-
-// checksumFile computes the SHA256 checksum of a local file.
-func checksumFile(path string) (string, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return "", err
-	}
-
-	defer func() { _ = f.Close() }()
-
-	h := sha256.New()
-	if _, err := io.Copy(h, f); err != nil {
-		return "", err
-	}
-
-	return hex.EncodeToString(h.Sum(nil)), nil
 }

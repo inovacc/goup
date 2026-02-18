@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/inovacc/goup/internal/goversion"
@@ -17,22 +16,22 @@ var installCmd = &cobra.Command{
 	Short: "Download and install the latest Go version",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		p := platform.Detect()
-		fmt.Printf("Platform: %s/%s\n", p.OS, p.Arch)
+		cmd.Printf("Platform: %s/%s\n", p.OS, p.Arch)
 
 		installed, _ := goversion.InstalledVersion()
 		if installed != "" {
-			fmt.Printf("Installed: %s\n", installed)
+			cmd.Printf("Installed: %s\n", installed)
 		}
 
 		latest, err := goversion.LatestStable()
 		if err != nil {
-			return fmt.Errorf("fetch latest: %w", err)
+			return err
 		}
 
-		fmt.Printf("Latest:    %s\n", latest.Version)
+		cmd.Printf("Latest:    %s\n", latest.Version)
 
 		if !forceInstall && installed != "" && !goversion.NeedsUpdate(installed, latest.Version) {
-			fmt.Println("Already up to date. Use --force to reinstall.")
+			cmd.Println("Already up to date. Use --force to reinstall.")
 			return nil
 		}
 
@@ -45,14 +44,13 @@ var installCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		defer installer.Cleanup(filePath)
 
 		if err := installer.Install(filePath); err != nil {
-			fmt.Fprintf(os.Stderr, "Installation failed: %v\n", err)
-			return err
+			cmd.PrintErrln("Installation failed:", err)
+			os.Exit(1)
 		}
 
-		fmt.Printf("Successfully installed %s\n", latest.Version)
+		cmd.Printf("Successfully installed %s\n", latest.Version)
 
 		return nil
 	},

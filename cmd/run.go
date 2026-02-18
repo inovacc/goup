@@ -105,8 +105,6 @@ func ensureCached(version string) error {
 		return err
 	}
 
-	defer func() { _ = os.Remove(archivePath) }()
-
 	if err := cache.Install(version, archivePath); err != nil {
 		return err
 	}
