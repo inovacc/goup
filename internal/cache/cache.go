@@ -58,6 +58,31 @@ func Has(version string) bool {
 	return err == nil
 }
 
+// Checksum returns the stored SHA256 checksum for a cached version, or empty string if not found.
+func Checksum(version string) string {
+	vdir, err := VersionDir(version)
+	if err != nil {
+		return ""
+	}
+
+	data, err := os.ReadFile(filepath.Join(vdir, ".sha256"))
+	if err != nil {
+		return ""
+	}
+
+	return strings.TrimSpace(string(data))
+}
+
+// SaveChecksum stores the SHA256 checksum for a cached version.
+func SaveChecksum(version string, checksum string) error {
+	vdir, err := VersionDir(version)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(filepath.Join(vdir, ".sha256"), []byte(checksum+"\n"), 0o644)
+}
+
 // Install extracts a Go archive into the cache directory for the given version.
 // archivePath should be a .tar.gz (Linux/macOS) or .zip (Windows) file.
 func Install(version string, archivePath string) error {

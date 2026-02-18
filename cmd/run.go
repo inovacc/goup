@@ -45,10 +45,8 @@ func runRun(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	if !cache.Has(version) {
-		if err := downloadToCache(version); err != nil {
-			return err
-		}
+	if err := ensureCached(version); err != nil {
+		return err
 	}
 
 	if len(cmdArgs) == 0 {
@@ -67,9 +65,7 @@ func normalizeVersion(v string) string {
 	return v
 }
 
-func downloadToCache(version string) error {
-	slog.Info("downloading", "version", version)
-
+func ensureCached(version string) error {
 	releases, err := goversion.FetchReleases()
 	if err != nil {
 		return err
@@ -87,6 +83,23 @@ func downloadToCache(version string) error {
 		return err
 	}
 
+	// Skip download if cached and checksum matches
+	if cache.Has(version) {
+		stored := cache.Checksum(version)
+		if stored == file.SHA256 {
+			slog.Info("cached version is valid, skipping download", "version", version)
+			return nil
+		}
+
+		slog.Info("checksum mismatch, re-downloading", "version", version)
+
+		if err := cache.Remove(version); err != nil {
+			return err
+		}
+	}
+
+	slog.Info("downloading", "version", version)
+
 	archivePath, err := installer.Download(file)
 	if err != nil {
 		return err
@@ -95,6 +108,10 @@ func downloadToCache(version string) error {
 	defer func() { _ = os.Remove(archivePath) }()
 
 	if err := cache.Install(version, archivePath); err != nil {
+		return err
+	}
+
+	if err := cache.SaveChecksum(version, file.SHA256); err != nil {
 		return err
 	}
 

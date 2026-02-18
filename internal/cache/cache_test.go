@@ -205,6 +205,35 @@ func TestListEmpty(t *testing.T) {
 	// This is implicitly tested — if no versions dir exists yet, List returns nil, nil
 }
 
+func TestSaveAndChecksum(t *testing.T) {
+	version := "go99.0.0-test-checksum"
+
+	vdir, _ := VersionDir(version)
+	if err := os.MkdirAll(vdir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	defer func() { _ = os.RemoveAll(vdir) }()
+
+	want := "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+
+	if err := SaveChecksum(version, want); err != nil {
+		t.Fatalf("SaveChecksum: %v", err)
+	}
+
+	got := Checksum(version)
+	if got != want {
+		t.Errorf("Checksum() = %q, want %q", got, want)
+	}
+}
+
+func TestChecksumMissing(t *testing.T) {
+	got := Checksum("go99.99.99-nonexistent")
+	if got != "" {
+		t.Errorf("Checksum() = %q, want empty for missing version", got)
+	}
+}
+
 // createTestZip creates a zip file containing go/bin/go (or go.exe on Windows).
 func createTestZip(t *testing.T, path string) {
 	t.Helper()
