@@ -19,7 +19,12 @@ const downloadBaseURL = "https://go.dev/dl/"
 // Download fetches a Go release file to a temporary directory and verifies its checksum.
 // Returns the path to the downloaded file.
 func Download(file *goversion.File) (string, error) {
-	url := downloadBaseURL + file.Filename
+	return DownloadFromURL(file, downloadBaseURL)
+}
+
+// DownloadFromURL fetches a Go release file from the given base URL and verifies its checksum.
+func DownloadFromURL(file *goversion.File, baseURL string) (string, error) {
+	url := baseURL + file.Filename
 	destDir := os.TempDir()
 	destPath := filepath.Join(destDir, file.Filename)
 

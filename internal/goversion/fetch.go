@@ -13,9 +13,14 @@ const releasesURL = "https://go.dev/dl/?mode=json"
 
 // FetchReleases retrieves all available Go releases from the official API.
 func FetchReleases() ([]Release, error) {
+	return FetchReleasesFromURL(releasesURL)
+}
+
+// FetchReleasesFromURL retrieves Go releases from the given URL.
+func FetchReleasesFromURL(url string) ([]Release, error) {
 	client := &http.Client{Timeout: 30 * time.Second}
 
-	resp, err := client.Get(releasesURL)
+	resp, err := client.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("fetch releases: %w", err)
 	}
@@ -33,9 +38,14 @@ func FetchReleases() ([]Release, error) {
 	return releases, nil
 }
 
-// LatestStable returns the latest stable release.
+// LatestStable returns the latest stable release from the official API.
 func LatestStable() (*Release, error) {
-	releases, err := FetchReleases()
+	return LatestStableFromURL(releasesURL)
+}
+
+// LatestStableFromURL returns the latest stable release from the given URL.
+func LatestStableFromURL(url string) (*Release, error) {
+	releases, err := FetchReleasesFromURL(url)
 	if err != nil {
 		return nil, err
 	}
